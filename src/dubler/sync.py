@@ -1,11 +1,14 @@
 """Core synchronization logic."""
 
+import logging
 import shutil
 from dataclasses import dataclass
 from pathlib import Path
 
 from .checksum import calculate_sha256
 from .state import StateManager
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -73,14 +76,12 @@ class Synchronizer:
                                 raise IOError("Copy failed - file not created")
 
                         result.copied.append((rel_path, str(dest)))
-                        if self.verbose:
-                            print(
-                                f"  {'[DRY RUN] ' if dry_run else ''}COPIED: {rel_path} -> {dest}"
-                            )
+                        logger.debug(
+                            f"  {'[DRY RUN] ' if dry_run else ''}COPIED: {rel_path} -> {dest}"
+                        )
                     else:
                         result.skipped.append((rel_path, str(dest)))
-                        if self.verbose:
-                            print(f"  SKIPPED: {rel_path} (already exists)")
+                        logger.debug(f"  SKIPPED: {rel_path} (already exists)")
 
                 except Exception as e:
                     error_msg = str(e)
@@ -88,7 +89,7 @@ class Synchronizer:
                     self.state_manager.add_failed_file(
                         str(rel_path), str(dest), error_msg
                     )
-                    print(f"  FAILED: {rel_path} -> {dest}: {error_msg}")
+                    logger.error(f"  FAILED: {rel_path} -> {dest}: {error_msg}")
 
         return result
 

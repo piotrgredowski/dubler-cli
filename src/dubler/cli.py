@@ -1,11 +1,14 @@
 """CLI interface for dubler."""
 
 import argparse
+import logging
 from pathlib import Path
 
 from .config import Config
 from .state import StateManager
 from .sync import Synchronizer
+
+logger = logging.getLogger(__name__)
 
 
 def get_config_dir() -> Path:
@@ -119,19 +122,27 @@ def show_failed_files(state_manager: StateManager) -> None:
     failed = state_manager.get_failed_files()
 
     if not failed:
-        print("No failed files recorded.")
+        logger.info("No failed files recorded.")
         return
 
-    print(f"\nFailed files ({len(failed)}):")
+    logger.info(f"Failed files ({len(failed)}):")
     for entry in failed:
-        print(f"  - {entry['file']} -> {entry['dest']}")
-        print(f"    Error: {entry['error']}")
-        print(f"    Time: {entry['timestamp']}")
+        logger.info(f"  - {entry['file']} -> {entry['dest']}")
+        logger.info(f"    Error: {entry['error']}")
+        logger.info(f"    Time: {entry['timestamp']}")
 
 
 def main() -> None:
     """Main entry point."""
     args = parse_args()
+
+    log_level = logging.DEBUG if args.verbose else logging.INFO
+    logging.basicConfig(
+        level=log_level,
+        format="%(message)s",
+        handlers=[logging.StreamHandler()],
+    )
+
     config_dir = get_config_dir()
     state_dir = get_state_dir()
     config_dir.mkdir(parents=True, exist_ok=True)
@@ -147,26 +158,25 @@ def main() -> None:
     # Handle --clear-failed flag
     if args.clear_failed:
         state_manager.clear_failed_files()
-        print("Cleared failed files from state.")
+        logger.info("Cleared failed files from state.")
         return
 
     # Load configuration
     config = load_config(args)
 
     if not config.source:
-        print("Error: Source directory not specified (use --source or config file)")
+        logger.error("Source directory not specified (use --source or config file)")
         return
 
     if not config.destinations:
-        print("Error: No destination directories specified (use --dest or config file)")
+        logger.error("No destination directories specified (use --dest or config file)")
         return
 
     # Run synchronization
-    print(f"Source: {config.source}")
-    print(f"Destinations: {[str(d) for d in config.destinations]}")
+    logger.info(f"Source: {config.source}")
+    logger.info(f"Destinations: {[str(d) for d in config.destinations]}")
     if config.dry_run:
-        print("DRY RUN mode - no files will be copied")
-    print()
+        logger.info("DRY RUN mode - no files will be copied")
 
     synchronizer = Synchronizer(state_manager, verbose=config.verbose)
 
@@ -178,18 +188,19 @@ def main() -> None:
         )
 
         # Print summary
-        print("\nSummary:")
-        print(f"  Copied: {len(result.copied)}")
-        print(f"  Skipped: {len(result.skipped)}")
-        print(f"  Failed: {len(result.failed)}")
+        logger.info("")
+        logger.info("Summary:")
+        logger.info(f"  Copied: {len(result.copied)}")
+        logger.info(f"  Skipped: {len(result.skipped)}")
+        logger.info(f"  Failed: {len(result.failed)}")
 
         if result.failed:
-            print(
+            logger.warning(
                 f"\n{len(result.failed)} file(s) failed to copy. Run with --failed to see details."
             )
 
     except Exception as e:
-        print(f"Error: {e}")
+        logger.error(f"{e}")
 
 
 if __name__ == "__main__":
