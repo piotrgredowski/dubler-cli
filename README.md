@@ -101,6 +101,20 @@ dubler --failed
 dubler -s ~/Documents -d ~/Backup/Documents
 ```
 
+## Releasing
+
+To create a new release:
+
+```bash
+# Tag the release (semantic versioning)
+git tag v1.0.0
+
+# Push the tag to trigger the release workflow
+git push origin v1.0.0
+```
+
+This will automatically create a draft release on GitHub with auto-generated release notes. Review and publish the release when ready.
+
 ## Conventional Commits
 
 This project uses conventional commit messages. See [AGENTS.md](AGENTS.md) for guidelines.
