@@ -16,6 +16,14 @@ Directory synchronization tool.
 
 ## Installation
 
+**No installation required!** You can run dubler directly with `uvx`:
+
+```bash
+uvx dubler --help
+```
+
+If you prefer to install:
+
 ```bash
 # From PyPI
 pip install dubler
@@ -32,19 +40,19 @@ uv install
 
 ```bash
 # Basic sync
-dubler --source /path/to/source --dest /path/to/dest1 --dest /path/to/dest2
+uvx dubler --source /path/to/source --dest /path/to/dest1 --dest /path/to/dest2
 
 # Dry run (preview without copying)
-dubler -s /path/to/source -d /path/to/dest --dry-run
+uvx dubler -s /path/to/source -d /path/to/dest --dry-run
 
 # Verbose output
-dubler -s /path/to/source -d /path/to/dest -v
+uvx dubler -s /path/to/source -d /path/to/dest -v
 
 # Show failed files from previous runs
-dubler --failed
+uvx dubler --failed
 
 # Clear failed files from state
-dubler --clear-failed
+uvx dubler --clear-failed
 ```
 
 ### Configuration File
@@ -66,13 +74,13 @@ Create a JSON config file (default: `~/.config/dubler/config.json`):
 Then run without arguments:
 
 ```bash
-dubler
+uvx dubler
 ```
 
 Or specify a custom config file:
 
 ```bash
-dubler --config /path/to/config.json
+uvx dubler --config /path/to/config.json
 ```
 
 ## How It Works
@@ -95,16 +103,16 @@ The application stores data in standard XDG Base Directory locations:
 
 ```bash
 # Sync photos to multiple backup drives
-dubler -s ~/Pictures -d /Volumes/Backup1/Photos -d /Volumes/Backup2/Photos
+uvx dubler -s ~/Pictures -d /Volumes/Backup1/Photos -d /Volumes/Backup2/Photos
 
 # Preview what would be synced
-dubler -s ~/Documents -d ~/Backup/Documents --dry-run -v
+uvx dubler -s ~/Documents -d ~/Backup/Documents --dry-run -v
 
 # After a failed run, see what failed
-dubler --failed
+uvx dubler --failed
 
 # Fix the issue and run again (idempotent)
-dubler -s ~/Documents -d ~/Backup/Documents
+uvx dubler -s ~/Documents -d ~/Backup/Documents
 ```
 
 ## Releasing
