@@ -1,12 +1,12 @@
 # Dubler
 
-Directory synchronization tool using checksums.
+Directory synchronization tool.
 
 > **Note:** The name "dubler" comes from Polish, where it means "a person replacing an actor in film or theater" (stunt double / stand-in). Just as a dubler stands in for an actor, this tool creates backup copies that can stand in for your original files — if something happens to the original, the backup is ready to take its place.
 
 ## Features
 
-- **Checksum-based comparison**: Files are compared using SHA256 hashes, not just timestamps
+- **Checksum-based comparison**: Files are compared using SHA256 hashes
 - **Multiple destinations**: Sync to multiple directories at once
 - **Idempotent**: Running multiple times is safe - only copies missing or changed files
 - **Failure tracking**: Tracks failed files and allows re-running
@@ -43,7 +43,7 @@ dubler --clear-failed
 
 ### Configuration File
 
-Create a JSON config file (default: `~/.dubler/config.json`):
+Create a JSON config file (default: `~/.config/dubler/config.json`):
 
 ```json
 {
@@ -75,15 +75,15 @@ dubler --config /path/to/config.json
 2. For each destination:
    - Compares files using SHA256 checksums
    - Copies files that don't exist or have different checksums
-   - Tracks any failures in `~/.dubler/state.json`
+   - Tracks any failures in `~/.local/state/dubler/state.json`
 3. Displays summary of copied, skipped, and failed files
 
 ## State
 
-The application stores state in `~/.dubler/`:
+The application stores data in standard XDG Base Directory locations:
 
-- `config.json`: Configuration file (optional)
-- `state.json`: Failed files from previous runs
+- `~/.config/dubler/config.json`: Configuration file (optional)
+- `~/.local/state/dubler/state.json`: Failed files from previous runs
 
 ## Examples
 

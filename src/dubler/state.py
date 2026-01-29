@@ -12,7 +12,7 @@ class StateManager:
         """Initialize state manager.
 
         Args:
-            state_dir: Path to state directory (~/.dubler).
+            state_dir: Path to state directory (typically ~/.local/state/dubler).
         """
         self.state_dir = state_dir
         self.state_file = state_dir / "state.json"

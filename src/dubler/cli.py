@@ -8,13 +8,22 @@ from .state import StateManager
 from .sync import Synchronizer
 
 
-def get_app_dir() -> Path:
-    """Get application directory in home.
+def get_config_dir() -> Path:
+    """Get configuration directory.
 
     Returns:
-        Path to ~/.dubler
+        Path to ~/.config/dubler
     """
-    return Path.home() / ".dubler"
+    return Path.home() / ".config" / "dubler"
+
+
+def get_state_dir() -> Path:
+    """Get state directory.
+
+    Returns:
+        Path to ~/.local/state/dubler
+    """
+    return Path.home() / ".local" / "state" / "dubler"
 
 
 def parse_args() -> argparse.Namespace:
@@ -45,7 +54,7 @@ def parse_args() -> argparse.Namespace:
         "-c",
         "--config",
         type=Path,
-        help=f"Path to JSON config file (default: {get_app_dir() / 'config.json'})",
+        help=f"Path to JSON config file (default: {get_config_dir() / 'config.json'})",
     )
     parser.add_argument(
         "--dry-run",
@@ -84,7 +93,7 @@ def load_config(args: argparse.Namespace) -> Config:
     config = Config()
 
     # Load from config file if specified or default exists
-    config_path = args.config or (get_app_dir() / "config.json")
+    config_path = args.config or (get_config_dir() / "config.json")
     if config_path.exists():
         config = Config.from_file(config_path)
 
@@ -123,10 +132,12 @@ def show_failed_files(state_manager: StateManager) -> None:
 def main() -> None:
     """Main entry point."""
     args = parse_args()
-    app_dir = get_app_dir()
-    app_dir.mkdir(parents=True, exist_ok=True)
+    config_dir = get_config_dir()
+    state_dir = get_state_dir()
+    config_dir.mkdir(parents=True, exist_ok=True)
+    state_dir.mkdir(parents=True, exist_ok=True)
 
-    state_manager = StateManager(app_dir)
+    state_manager = StateManager(state_dir)
 
     # Handle --failed flag
     if args.failed:
