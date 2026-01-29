@@ -7,17 +7,77 @@ on:
 
 permissions:
   contents: write
+  id-token: write  # Required for trusted publishing
 
 jobs:
-  create-release:
+  release:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate Release Notes
+        id: release_notes
+        run: |
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          if [ -z "$PREV_TAG" ]; then
+            echo "notes=Initial release" >> $GITHUB_OUTPUT
+          else
+            echo "notes=$(git log ${PREV_TAG}..HEAD --oneline --format='- %s')" >> $GITHUB_OUTPUT
+          fi
+          echo "prev_tag=${PREV_TAG}" >> $GITHUB_OUTPUT
+
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          draft: true
-          generate_release_notes: true
+          draft: false
+          prerelease: false
+          generate_release_notes: false
           body: |
-            See [Release Notes](https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }})
+            ## What's Changed
+
+            ${{ steps.release_notes.outputs.notes }}
+
+            ## Installation
+
+            \`\`\`bash
+            pip install dubler
+            # or with uv
+            uv pip install dubler
+            \`\`\`
+
+            **Full Changelog**: https://github.com/${{ github.repository }}/compare/${{ steps.release_notes.outputs.prev_tag }}...${{ github.ref_name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-pypi:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: Build package
+        run: |
+          uv build --out-dir dist
+
+      - name: Publish to PyPI
+        env:
+          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+        run: |
+          uv publish --token $PYPI_TOKEN dist/*.tar.gz dist/*.whl
+

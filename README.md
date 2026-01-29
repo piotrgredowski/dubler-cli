@@ -17,6 +17,12 @@ Directory synchronization tool.
 ## Installation
 
 ```bash
+# From PyPI
+pip install dubler
+# or with uv
+uv pip install dubler
+
+# From source
 uv install
 ```
 
@@ -103,17 +109,49 @@ dubler -s ~/Documents -d ~/Backup/Documents
 
 ## Releasing
 
-To create a new release:
+The project uses automatic versioning based on git tags via `setuptools_scm`.
+
+### Creating a Release
+
+Use the release helper script:
 
 ```bash
-# Tag the release (semantic versioning)
-git tag v1.0.0
+# Bump patch version (bug fixes)
+uv run python scripts/release.py patch
 
-# Push the tag to trigger the release workflow
+# Bump minor version (new features)
+uv run python scripts/release.py minor
+
+# Bump major version (breaking changes)
+uv run python scripts/release.py major
+
+# Or specify exact version
+uv run python scripts/release.py patch --version 1.2.3
+```
+
+This will:
+1. Create and push a git tag (e.g., `v1.0.0`)
+2. Trigger the GitHub Actions release workflow
+3. Automatically create a published release with:
+   - Release notes from commits
+   - Installation instructions
+   - Full changelog link
+4. Publish to PyPI
+
+### Manual Release (Alternative)
+
+```bash
+# Create and push tag manually
+git tag v1.0.0
 git push origin v1.0.0
 ```
 
-This will automatically create a draft release on GitHub with auto-generated release notes. Review and publish the release when ready.
+### Version Format
+
+Tags must follow semantic versioning: `vX.Y.Z`
+- `X` = Major version (breaking changes)
+- `Y` = Minor version (new features, backwards compatible)
+- `Z` = Patch version (bug fixes, backwards compatible)
 
 ## Conventional Commits
 

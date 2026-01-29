@@ -11,6 +11,9 @@ __pycache__/
 build/
 develop-eggs/
 dist/
+
+# setuptools_scm
+src/dubler/_version.py
 downloads/
 eggs/
 .eggs/
@@ -214,3 +217,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Sisyphus work session files
+.sisyphus/

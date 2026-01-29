@@ -1,6 +1,6 @@
 [project]
 name = "dubler"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Directory synchronization tool using checksums"
 readme = "README.md"
 requires-python = ">=3.13"
@@ -18,3 +18,11 @@ dev = [
 
 [tool.uv]
 package = true
+
+[build-system]
+requires = ["setuptools>=61.0", "setuptools_scm>=8.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
+fallback_version = "0.0.1"
+write_to = "src/dubler/_version.py"
