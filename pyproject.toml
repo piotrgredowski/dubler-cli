@@ -1,7 +1,20 @@
 [project]
-name = "sync-storage"
+name = "dubler"
 version = "0.1.0"
-description = "Add your description here"
+description = "Directory synchronization tool using checksums"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = []
+
+[project.scripts]
+dubler = "dubler.cli:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+    "ruff>=0.14.14",
+    "ty>=0.0.14",
+]
+
+[tool.uv]
+package = true

@@ -1,0 +1,9 @@
+{
+  "source": "/path/to/source",
+  "destinations": [
+    "/path/to/destination1",
+    "/path/to/destination2"
+  ],
+  "dry_run": false,
+  "verbose": false
+}
