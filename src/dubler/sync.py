@@ -59,7 +59,8 @@ class Synchronizer:
 
         for dest in destinations:
             dest = dest.expanduser().resolve()
-            dest.mkdir(parents=True, exist_ok=True)
+            if not dry_run:
+                dest.mkdir(parents=True, exist_ok=True)
 
             for rel_path in source_files:
                 src_file = source / rel_path

@@ -133,6 +133,23 @@ class TestSyncIntegration:
         assert len(result.copied) == 1
         assert not (dest / "file.txt").exists()
 
+    def test_sync_dry_run_does_not_create_dest_directory(self, tmp_path: Path) -> None:
+        """Test that dry run doesn't create destination directory."""
+        source = tmp_path / "source"
+        dest = tmp_path / "dest"
+
+        source.mkdir()
+        (source / "file.txt").write_text("Dry run test")
+
+        # Sync with dry run
+        state_dir = tmp_path / "state"
+        state_manager = StateManager(state_dir)
+        synchronizer = Synchronizer(state_manager)
+
+        synchronizer.sync(source, [dest], dry_run=True)
+
+        assert not dest.exists()
+
     def test_sync_creates_nested_directories(self, tmp_path: Path) -> None:
         """Test that sync creates nested directory structure."""
         source = tmp_path / "source"
