@@ -4,6 +4,7 @@ import argparse
 import logging
 from pathlib import Path
 
+from . import __version__
 from .config import Config
 from .state import StateManager
 from .sync import Synchronizer
@@ -38,6 +39,12 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="dubler",
         description="Synchronize files from source to multiple destinations using checksums.",
+    )
+    parser.add_argument(
+        "-V",
+        "--version",
+        action="version",
+        version=f"%(prog)s {__version__}",
     )
 
     parser.add_argument(
