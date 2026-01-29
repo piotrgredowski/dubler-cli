@@ -13,6 +13,7 @@ dubler = "dubler.cli:main"
 dev = [
     "pytest>=9.0.2",
     "ruff>=0.14.14",
+    "setuptools-scm>=9.2.2",
     "ty>=0.0.14",
 ]
 
